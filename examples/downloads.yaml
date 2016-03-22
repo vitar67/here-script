@@ -1,0 +1,16 @@
+rules:
+    - any:
+        - at: ~/Downloads
+        - at: ~/downloads
+actions:
+    -
+        binding: c
+        title: clear
+        description: Clear the folder
+        shell: if [ -d ~/Downloads ]; then rm -rif ~/Downloads/*; fi; if [ -d ~/downloads ]; then rm -rif ~/downloads/*; fi
+        # TODO: Add some way of refering to the matched directory
+    -
+        binding: o
+        title: remove-old
+        description: Remove files older than 14 days
+        shell: if [ -d ~/Downloads ]; then find ~/Downloads/ -mtime +14 -delete; fi; if [ -d ~/downloads ]; then find ~/downloads/ -mtime +14 -delete; fi

@@ -1,4 +1,4 @@
-rules: # Match directories containing a `.git/` directory
+rules: # Match directories whose ancestors contain a `.git/` directory
     - sibling: '.git/'
 actions:
     - # hs l
@@ -16,3 +16,13 @@ actions:
         title: commit
         description: Commit
         shell: git commit
+    - #hs f
+        binding: f
+        title: fetch
+        description: Fetch from origin
+        shell: git fetch
+    - #hs
+        binding: default
+        title: status
+        description: Show the repo's status
+        shell: git status

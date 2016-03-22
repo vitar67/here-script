@@ -8,24 +8,34 @@ Have commands you only run in certain places of your filesystem only a few keyst
 The rulebooks define which directories will have which _here-scripts_. For example to make your basic git commands available in any Git repo :
 
 ``` YAML
-rules: # Match directories whose hierarchy contains a `.git/` directory
-    - sibling: .git/
+rules: # Match directories whose ancestors contain a `.git/` directory
+    - sibling: '.git/'
 actions:
-    - # use with `hs l`
+    - # hs l
         binding: l
         title: pull
         description: Pull from origin.
         shell: git pull
-    - # use with `hs p`
+    - # hs p
         binding: p
         title: push
         description: Push to origin
         shell: git push
-    - # use with `hs c`
+    - # hs c
         binding: c
         title: commit
         description: Commit
         shell: git commit
+    - #hs f
+        binding: f
+        title: fetch
+        description: Fetch from origin
+        shell: git fetch
+    - #hs
+        binding: default
+        title: status
+        description: Show the repo's status
+        shell: git status
 ```
 
 Each rulebook has a set of `rules` and a set of `actions` and is written using YAML. Right now they are to be located in `~/.config/rules/`.

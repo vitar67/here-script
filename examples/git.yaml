@@ -1,5 +1,5 @@
 rules: # Match directories containing a `.git/` directory
-    - contains: '.git/'
+    - sibling: '.git/'
 actions:
     - # hs l
         binding: l

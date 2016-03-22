@@ -1,5 +1,5 @@
 rules:
-    - path: ~/Music/
+    - in: ~/Music/
 actions:
     -
         binding: s

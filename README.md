@@ -8,8 +8,8 @@ Have commands you only run in certain places of your filesystem only a few keyst
 The rulebooks define which directories will have which _here-scripts_. For example to make your basic git commands available in any Git repo :
 
 ``` YAML
-rules: # Match directories containing a `.git/` directory
-    - contains: .git/
+rules: # Match directories whose hierarchy contains a `.git/` directory
+    - sibling: .git/
 actions:
     - # use with `hs l`
         binding: l

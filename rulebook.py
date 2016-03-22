@@ -23,16 +23,35 @@ class Rulebook:
 		self.rules_test = test_from_rules(self.yaml_rules)
 		self.actions = list(map(lambda y: Action(y), self.yaml_actions))
 
+def ancestors(path):
+	path = os.path.realpath(path)
+	yield path
+	while True:
+		(path, head) = os.path.split(path)
+		yield path
+		if path == '/':
+			break
+
+def contains(directory, file):
+	if file.endswith('/'):
+		return any(map(lambda f: (f + '/') == file and
+		                         os.path.isdir(os.path.join(directory, f)), os.listdir(directory)))
+	else:
+		return any(map(lambda f: f == file, os.listdir(directory)))
+
 def test_from_rules(rules):
 	def test_rule(rule):
 		operators = {
 			'contains': contains_rule,
-			'path': path_rule
+			'sibling': sibling_rule,
+			'in': in_rule,
+			'at': at_rule
 		}
 
 		combinators = {
 			'any': test_any_of,
-			'all': test_all_of
+			'all': test_all_of,
+			'none': test_none_of
 		}
 
 		if len(rule) == 1:
@@ -49,23 +68,30 @@ def test_from_rules(rules):
 				raise
 
 	def contains_rule(argument, directory):
-		if argument.endswith('/'):
-			result = any(map(lambda f: (f + '/') == argument and os.path.isdir('./' + f), os.listdir(directory)))
-		else:
-			result = any(map(lambda f: f == argument, os.listdir(directory)))
-		return result
+		return contains(directory, argument)
 
-	def path_rule(argument, directory):
+	def in_rule(argument, directory):
 		current = os.path.realpath(directory)
 		rule_target = os.path.realpath(os.path.expanduser(argument))
 		result = current.startswith(rule_target)
 		return result
+
+	def at_rule(argument, directory):
+		current = os.path.realpath(directory)
+		rule_target = os.path.realpath(os.path.expanduser(argument))
+		return current == rule_target
+
+	def sibling_rule(argument, directory):
+		return any(map(lambda d: contains(d, argument), ancestors(directory)))
 
 	def test_all_of(rules):
 		return lambda d: all(map(lambda r: test_rule(r)(d), rules))
 
 	def test_any_of(rules):
 		return lambda d: any(map(lambda r: test_rule(r)(d), rules))
+
+	def test_none_of(rules):
+		return lambda d: not test_any_of(rules)(d)
 
 	return test_all_of(rules)
 

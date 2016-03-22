@@ -2,7 +2,7 @@ rules:
     - contains: .git/
     - contains: hs
     - contains: test/
-    - path: ~/Code
+    - in: ~/Code
 actions:
     -
         binding: f

@@ -49,7 +49,11 @@ def here_script(directory, rbs, command):
 	actions = binding_dict(actions)
 
 	if command in actions:
-		os.execl("/bin/sh", "sh", "-c", actions[command].shell)
+		try:
+			os.chdir(directory)
+			os.execl("/bin/sh", "sh", "-c", actions[command].shell)
+		except:
+			print("Failed to execute.", file=stderr)
 	else:
 		print('%s is undefined.' % command)
 

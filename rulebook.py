@@ -2,7 +2,7 @@ from action import Action
 import functools
 import os
 import yaml
-import marshal
+import subprocess
 try:
 	import cPickle as pickle
 except:
@@ -44,6 +44,7 @@ def test_from_rules(rules):
 		operators = {
 			'contains': contains_rule,
 			'sibling': sibling_rule,
+			'success': success_rule,
 			'in': in_rule,
 			'at': at_rule
 		}
@@ -83,6 +84,10 @@ def test_from_rules(rules):
 
 	def sibling_rule(argument, directory):
 		return any(map(lambda d: contains(d, argument), ancestors(directory)))
+
+	def success_rule(argument, directory):
+		with open('/dev/null', 'w') as dev_null:
+			return not subprocess.call(['/bin/sh', '-c', 'cd "%s"; %s' % (directory, argument)], stdout=dev_null, stderr=dev_null) 
 
 	def test_all_of(rules):
 		return lambda d: all(map(lambda r: test_rule(r)(d), rules))

@@ -5,4 +5,4 @@ actions:
         binding: s
         title: sync
         description: Synchronize with my Plex's Music/ folder.
-        shell: echo "Sync!"
+        shell: ~/.scripts/sync-music.sh

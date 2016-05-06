@@ -25,4 +25,4 @@ actions:
         binding: default
         title: status
         description: Show the repo's status
-        shell: git status
+        command: [git, status]

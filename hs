@@ -4,6 +4,7 @@ import argparse
 import os
 import yaml
 import functools
+from sys import stderr
 from action import Action
 from rulebook import Rulebook
 import rulebook
@@ -43,7 +44,7 @@ def get_actions(rulebooks_iterable):
 		actions += rb.actions
 	return actions
 
-def here_script(directory, rbs, command):
+def here_script(directory, rbs, command, command_args):
 	active_rbs = filter_matching_rulebooks(rbs, directory)
 	actions = get_actions(active_rbs)
 	actions = binding_dict(actions)
@@ -51,9 +52,18 @@ def here_script(directory, rbs, command):
 	if command in actions:
 		try:
 			os.chdir(directory)
-			os.execl("/bin/sh", "sh", "-c", actions[command].shell)
-		except:
+			if actions[command].shell and actions[command].command:
+				print("Ambiguous action: both `shell' and `command' are defined.", file=stderr)
+			elif actions[command].shell:
+				os.execl("/bin/sh", "sh", "-c", actions[command].shell)
+			elif actions[command].command:
+				command = ['/usr/bin/env', 'env'] + actions[command].command + command_args
+				os.execl(*command)
+			else:
+				print('No action defined.', file=stderr)
+		except Exception as e:
 			print("Failed to execute.", file=stderr)
+			print(e, file=stderr)
 	else:
 		print('%s is undefined.' % command)
 
@@ -78,11 +88,11 @@ if __name__ == "__main__":
 	group = parser.add_mutually_exclusive_group(required=False)
 	group.add_argument('-w', '--what', nargs='?', choices=['pretty', 'oneline'], const='pretty', help="Run no command and print available commands for the directory instead. Defaults to 'pretty'.")
 	group.add_argument('command', nargs='?', default='default')
-	args = parser.parse_args()
+	args, command_args = parser.parse_known_args()
 
 	rbs = rulebook.get_rulebooks()
 
 	if args.what != None:
 		available_scripts(args.directory, rbs, args.what)
 	elif args.command != None:
-		here_script(args.directory, rbs, args.command)
+		here_script(args.directory, rbs, args.command, command_args)

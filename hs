@@ -78,6 +78,9 @@ def available_scripts(directory, rbs, format):
 	elif format == 'oneline':
 		parts = ['%s %s' % (binding, action.title) for binding, action in actions.items()]
 		print(', '.join(sorted(parts)))
+	elif format == 'compact':
+		parts = ['%s' % (binding,) for binding, actions in actions.items()]
+		print(', '.join(sorted(parts)))
 
 # -w --what prints the available commands in different formats
 # -C changes the target directory from the default, which is the current working directory
@@ -86,7 +89,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Quickly launch scripts here.')
 	parser.add_argument('-C', nargs='?', default=os.getcwd(), dest='directory', help='Run as if in DIRECTORY.')
 	group = parser.add_mutually_exclusive_group(required=False)
-	group.add_argument('-w', '--what', nargs='?', choices=['pretty', 'oneline'], const='pretty', help="Run no command and print available commands for the directory instead. Defaults to 'pretty'.")
+	group.add_argument('-w', '--what', nargs='?', choices=['pretty', 'oneline', 'compact'], const='pretty', help="Run no command and print available commands for the directory instead. Defaults to 'pretty'.")
 	group.add_argument('command', nargs='?', default='default')
 	args, command_args = parser.parse_known_args()
 

@@ -5,24 +5,34 @@ actions:
         binding: l
         title: pull
         description: Pull from origin.
-        shell: git pull
+        command: [git, push]
     - # hs p
         binding: p
         title: push
         description: Push to origin
-        shell: git push
+        command: [git, push]
     - # hs c
         binding: c
         title: commit
         description: Commit
-        shell: git commit
+        command: [git, commit]
     - #hs f
         binding: f
         title: fetch
         description: Fetch from origin
-        shell: git fetch
+        command: [git, fetch]
     - #hs
         binding: default
         title: status
         description: Show the repo's status
         command: [git, status]
+    - #hs d
+        binding: d
+        title: diff
+        description: Show the current diff
+        shell: git diff | vimpager
+    - #hs i
+        binding: i
+        title: index
+        description: Show the index
+        shell: git diff --cached | vimpager
